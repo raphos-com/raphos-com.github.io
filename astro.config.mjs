@@ -10,6 +10,11 @@ export default defineConfig({
   base: '/',
   output: 'static',
   trailingSlash: 'ignore',
+  // Static redirects. In static output Astro emits a small meta-refresh HTML
+  // page for each entry, which works on GitHub Pages (no server needed).
+  redirects: {
+    '/synera': '/work/synera/',
+  },
   integrations: [sitemap()],
   build: {
     format: 'directory',

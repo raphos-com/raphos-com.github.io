@@ -103,7 +103,7 @@ export const categories: Category[] = [
     lede:
       'A suite of Raphos add-ins that bring physics, optimization and connectivity to Synera — the visual-programming and automation platform for engineering.',
     description: [
-      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, productivity tools, an optimizer, and connectors to external simulation and office software.',
+      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, an optimizer, automatic cable and pipe routing, productivity tools, and connectors to external simulation, MATLAB and the Microsoft 365 / Power Platform stack.',
       'Each add-in is developed in close partnership with the Synera team and tuned for production use — robust, fast and engineered to slot into real automation pipelines rather than one-off scripts. Together they let designers go from geometry to a validated, optimized result without leaving the Synera canvas.',
     ],
     links: [
@@ -119,10 +119,14 @@ export const categories: Category[] = [
     projectSlugs: [
       'raphos-physics',
       'raphos-optimizer',
+      'raphos-bundle',
       'raphos-tools',
       'simscale-connector',
+      'matlab-connector',
       'ms-office-connector',
       'raphos-teams-connector',
+      'power-automate-connector',
+      'power-bi-connector',
     ],
   },
   {
@@ -490,6 +494,200 @@ export const projects: Project[] = [
       'Live message streaming — no polling',
       'Automatic completion alerts and report sharing',
       'Incoming messages and ready files trigger runs',
+    ],
+  },
+
+  {
+    slug: 'raphos-bundle',
+    category: 'synera',
+    title: 'Raphos Bundle',
+    kicker: 'Synera add-in · Routing',
+    tagline:
+      'Constraint-driven cable and pipe routing — every route provably meets its bend, clearance and length limits, with nothing to tune.',
+    summary:
+      'Automatic cable and pipe-harness routing for Synera: A* corridor search plus constrained optimization, with hard requirements instead of tuned weights.',
+    tags: ['Cable routing', 'Path planning', 'Optimization', 'Constraints'],
+    links: [{ label: 'Synera platform', href: 'https://www.synera.io' }],
+    intro: [
+      'Raphos Bundle routes cables and pipes automatically inside Synera. Harness and pipe routing is normally done by hand-tuning a spring-particle simulation until it looks right — slow to learn and slow to converge, because real requirements like maximum bend, minimum length and no intersections end up expressed as competing weights instead of the hard limits they actually are.',
+      'Raphos Bundle treats them as requirements. A route either satisfies every limit, or the report tells you exactly which one it could not meet and by how much. There are no goal weights, time steps, damping factors or iteration counts to tune.',
+    ],
+    images: [
+      {
+        caption:
+          'A cable harness routed automatically by Raphos Bundle — straight runs joined by discrete bends, clear of every obstacle',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Two phases, no tuning',
+        paragraphs: [
+          'The solver splits routing into a fast global search and a precise local refinement, so it is both robust and deterministic.',
+        ],
+        list: [
+          'Corridor search: the scene is voxelised and A* finds a collision-free corridor — if none exists, that is the answer, delivered in a fraction of a second.',
+          'Constrained refinement: NLopt SLSQP smooths the route while holding hard limits on curvature, clearance, separation and length.',
+          'Cables bundle and follow surfaces naturally, coming out as long straight runs joined by discrete bends — the shape a real harness takes.',
+          'Requirements are met; preferences are optimized — the two are never traded off against each other.',
+        ],
+      },
+    ],
+    highlights: [
+      'Automatic cable and pipe-harness routing',
+      'Hard requirements, not tuned weights',
+      'A* corridor search + NLopt constrained refinement',
+      'A clear, actionable report when a limit cannot be met',
+    ],
+  },
+  {
+    slug: 'matlab-connector',
+    category: 'synera',
+    title: 'MATLAB Connector',
+    kicker: 'Synera add-in · Connector',
+    tagline:
+      'Run MATLAB scripts from a Synera workflow and pull the resulting workspace variables straight back as node outputs.',
+    summary:
+      'Connector running MATLAB scripts via the Automation Server (COM) and exposing workspace variables as Synera node outputs.',
+    tags: ['MATLAB', 'Scripting', 'Data exchange', 'Automation'],
+    links: [
+      { label: 'Synera platform', href: 'https://www.synera.io' },
+      { label: 'MATLAB', href: 'https://www.mathworks.com/products/matlab.html', note: 'MathWorks' },
+    ],
+    intro: [
+      'The MATLAB Connector lets a Synera workflow run MATLAB. Point a node at inline MATLAB code or a `.m` file, push inputs into the MATLAB workspace, and the script’s results come back as ordinary node outputs — so engineering maths already written in MATLAB becomes just another step in an automated Synera pipeline.',
+      'It drives MATLAB through its Automation Server, so the real MATLAB engine does the work and everything it can compute is available inside Synera.',
+    ],
+    images: [
+      {
+        caption:
+          'A MATLAB script running inside a Synera workflow, its workspace variables exposed as node outputs',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'MATLAB as a workflow node',
+        paragraphs: [
+          'Inputs go in as paired name/value lists, the script runs, and the connector reads the assigned variables back out — one output per result.',
+        ],
+        list: [
+          'Run inline MATLAB code or an external `.m` script from a Synera node.',
+          'Push typed inputs — including arrays — into the MATLAB workspace before the run.',
+          'Scan a script to expose one output per variable it assigns.',
+          'Bring existing MATLAB analyses into automated Synera workflows without a rewrite.',
+        ],
+      },
+    ],
+    highlights: [
+      'Run MATLAB scripts inside Synera',
+      'Workspace variables returned as node outputs',
+      'Reuse existing MATLAB code — no rewrite',
+      'Driven through the MATLAB Automation Server',
+    ],
+  },
+  {
+    slug: 'power-automate-connector',
+    category: 'synera',
+    title: 'Power Automate Connector',
+    kicker: 'Synera add-in · Connector',
+    tagline:
+      'Trigger Microsoft Power Automate cloud flows from a Synera workflow — and react when new runs appear.',
+    summary:
+      'Connector linking Synera to Microsoft Power Automate: fire cloud flows via webhook or the management API, and watch run history.',
+    tags: ['Power Automate', 'Cloud flows', 'Automation', 'Integration'],
+    links: [
+      { label: 'Synera platform', href: 'https://www.synera.io' },
+      {
+        label: 'Microsoft Power Automate',
+        href: 'https://www.microsoft.com/power-platform/products/power-automate',
+        note: 'cloud flows',
+      },
+    ],
+    intro: [
+      'The Power Automate Connector plugs Synera into Microsoft Power Automate. From inside a workflow you can trigger a cloud flow — the simplest path is a single webhook call — and, with an Azure AD sign-in, discover your environments, flows and run history through the Power Automate API.',
+      'That lets a Synera run reach into the whole Microsoft ecosystem Power Automate already connects to — approvals, notifications, SharePoint, Outlook and hundreds of other services — without leaving the canvas.',
+    ],
+    images: [
+      {
+        caption:
+          'A Synera workflow firing a Microsoft Power Automate cloud flow and reading the response',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Two ways in',
+        paragraphs: [
+          'The connector ships a no-sign-in webhook path for the common case and a full authenticated management surface for teams that need discovery and control.',
+        ],
+        list: [
+          'Webhook: build a JSON payload and POST it to a flow’s HTTP trigger — no sign-in needed.',
+          'Authenticated: sign in as a service principal or an unattended service user for Synera Run.',
+          'List environments, flows and run history, and run instant flows via the API.',
+          'Watch a flow’s runs and fire the next Synera step when a new run appears — optionally only on failures.',
+        ],
+      },
+    ],
+    highlights: [
+      'Trigger Power Automate cloud flows from Synera',
+      'Simple webhook path with no sign-in',
+      'Discover environments, flows and run history',
+      'React automatically when new runs appear',
+    ],
+  },
+  {
+    slug: 'power-bi-connector',
+    category: 'synera',
+    title: 'Power BI Connector',
+    kicker: 'Synera add-in · Connector',
+    tagline:
+      'Push simulation and optimization results from Synera straight into Microsoft Power BI — feeding live dashboards.',
+    summary:
+      'Connector pushing Synera-generated data into Microsoft Power BI datasets, so engineering workflows feed live dashboards.',
+    tags: ['Power BI', 'Dashboards', 'Reporting', 'Data exchange'],
+    links: [
+      { label: 'Synera platform', href: 'https://www.synera.io' },
+      {
+        label: 'Microsoft Power BI',
+        href: 'https://www.microsoft.com/power-platform/products/power-bi',
+        note: 'dashboards',
+      },
+    ],
+    intro: [
+      'The Power BI Connector sends Synera-generated data — simulation and optimization results — into Microsoft Power BI, so engineering workflows can feed live dashboards instead of stale, exported spreadsheets.',
+      'It builds push-dataset schemas, creates the datasets and streams rows to them through the official Power BI REST API, on the same Azure AD authentication used by the Raphos Teams Connector.',
+    ],
+    images: [
+      {
+        caption:
+          'A live Power BI dashboard fed with optimization results pushed from a Synera workflow',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'From workflow to dashboard',
+        paragraphs: [
+          'The connector treats a Power BI push dataset as a live sink for workflow results — define the table once, then append rows as runs complete.',
+        ],
+        list: [
+          'Define a push-dataset table schema with typed columns and create the dataset from Synera.',
+          'Append result rows to a table as a workflow runs; clear or refresh when needed.',
+          'List the workspaces and datasets available to you.',
+          'Sign in interactively, or as a service principal / service user for unattended Synera Run hosts.',
+        ],
+      },
+    ],
+    highlights: [
+      'Push Synera results into Power BI',
+      'Live dashboards fed straight from workflows',
+      'Create push datasets and append rows via the REST API',
+      'Interactive or unattended (service-principal) auth',
     ],
   },
 
