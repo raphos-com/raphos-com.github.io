@@ -39,6 +39,10 @@ export interface ImageSlot {
   ratio?: string;
   /** Fill mode: "cover" for screenshots/photos, "contain" for logos/diagrams. */
   fit?: 'cover' | 'contain';
+  /** Optional image credit (e.g. licence attribution), shown under the caption. */
+  credit?: string;
+  /** Optional URL the credit links to (e.g. the source/licence page). */
+  creditHref?: string;
 }
 
 export interface Project {
@@ -515,9 +519,12 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A cable harness routed automatically by Raphos Bundle — straight runs joined by discrete bends, clear of every obstacle',
+          'A real cable harness — the kind of physical routing problem Raphos Bundle solves automatically inside Synera',
+        src: '/img/work/cable-harness.jpg',
         ratio: '16 / 9',
         fit: 'cover',
+        credit: 'Photo: Adamantios, CC BY-SA 3.0',
+        creditHref: 'https://commons.wikimedia.org/wiki/File:Cable-harness-coaxials-0a.jpg',
       },
     ],
     sections: [
@@ -562,9 +569,12 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A MATLAB script running inside a Synera workflow, its workspace variables exposed as node outputs',
+          'MATLAB — the numerical-computing environment the connector runs and reads back from inside a Synera workflow',
+        src: '/img/work/matlab-logo.png',
         ratio: '16 / 9',
-        fit: 'cover',
+        fit: 'contain',
+        credit: 'MATLAB logo (public domain), via Wikimedia Commons',
+        creditHref: 'https://commons.wikimedia.org/wiki/File:Matlab_Logo.png',
       },
     ],
     sections: [
@@ -613,9 +623,12 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A Synera workflow firing a Microsoft Power Automate cloud flow and reading the response',
+          'Microsoft Power Automate — the cloud-flow service the connector triggers straight from a Synera workflow',
+        src: '/img/work/power-automate-logo.svg',
         ratio: '16 / 9',
-        fit: 'cover',
+        fit: 'contain',
+        credit: 'Power Automate logo (public domain), via Wikimedia Commons',
+        creditHref: 'https://commons.wikimedia.org/wiki/File:Microsoft_Power_Automate.svg',
       },
     ],
     sections: [
@@ -664,9 +677,12 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A live Power BI dashboard fed with optimization results pushed from a Synera workflow',
+          'Microsoft Power BI — the connector pushes Synera simulation and optimization results into its dashboards',
+        src: '/img/work/power-bi-logo.svg',
         ratio: '16 / 9',
-        fit: 'cover',
+        fit: 'contain',
+        credit: 'Power BI logo (public domain), via Wikimedia Commons',
+        creditHref: 'https://commons.wikimedia.org/wiki/File:New_Power_BI_Logo.svg',
       },
     ],
     sections: [

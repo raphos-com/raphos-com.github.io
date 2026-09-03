@@ -71,6 +71,8 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
               caption={heroImage.caption}
               ratio={heroImage.ratio}
               fit={heroImage.fit}
+              credit={heroImage.credit}
+              creditHref={heroImage.creditHref}
               loading="eager"
               width="half"
             />
@@ -107,6 +109,8 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
                       caption={inlineImages[i].caption}
                       ratio={inlineImages[i].ratio}
                       fit={inlineImages[i].fit}
+                      credit={inlineImages[i].credit}
+                      creditHref={inlineImages[i].creditHref}
                     />
                   ) : (
                     <ImagePlaceholder

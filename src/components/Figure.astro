@@ -18,9 +18,13 @@ export interface Props {
   loading?: 'lazy' | 'eager';
   /** "half" caps the figure at ~50% width (centred) on larger screens. */
   width?: 'full' | 'half';
+  /** Optional credit / attribution line shown under the caption. */
+  credit?: string;
+  /** Optional URL the credit links to. */
+  creditHref?: string;
 }
 
-const { src, caption, ratio = '16 / 9', fit = 'cover', loading = 'lazy', width = 'full' } = Astro.props;
+const { src, caption, ratio = '16 / 9', fit = 'cover', loading = 'lazy', width = 'full', credit, creditHref } = Astro.props;
 ---
 
 <figure class:list={['fig', { 'fig--half': width === 'half' }]}>
@@ -33,7 +37,20 @@ const { src, caption, ratio = '16 / 9', fit = 'cover', loading = 'lazy', width =
       class:list={['fig-img', `fit-${fit}`]}
     />
   </div>
-  {caption && <figcaption class="fig-cap">{caption}</figcaption>}
+  {(caption || credit) && (
+    <figcaption class="fig-cap">
+      {caption}
+      {credit && (
+        <span class="fig-credit">
+          {creditHref ? (
+            <a href={creditHref} rel="noopener nofollow" target="_blank">{credit}</a>
+          ) : (
+            credit
+          )}
+        </span>
+      )}
+    </figcaption>
+  )}
 </figure>
 
 <style>
@@ -57,4 +74,6 @@ const { src, caption, ratio = '16 / 9', fit = 'cover', loading = 'lazy', width =
     color: var(--color-muted);
     line-height: 1.5;
   }
+  .fig-credit { display: block; margin-top: 0.15rem; opacity: 0.8; }
+  .fig-credit a { color: inherit; text-decoration: underline; }
 </style>
