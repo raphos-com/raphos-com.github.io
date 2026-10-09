@@ -82,6 +82,9 @@ const research = [
                 kicker={p.kicker}
                 href={withBase(`/work/${category.slug}/${p.slug}`)}
                 tags={p.tags}
+                image={p.images[0]?.src ? withBase(p.images[0].src) : undefined}
+                imageAlt={p.images[0]?.caption}
+                imageFit={p.images[0]?.fit}
               >
                 {p.summary}
               </ProjectCard>

@@ -107,7 +107,7 @@ export const categories: Category[] = [
     lede:
       'A suite of Raphos add-ins that bring physics, optimization and connectivity to Synera — the visual-programming and automation platform for engineering.',
     description: [
-      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, an optimizer, automatic cable and pipe routing, productivity tools, and connectors to external simulation, MATLAB and the Microsoft 365 / Power Platform stack.',
+      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, an optimizer, automatic cable and pipe routing, research-grade mesh and point-cloud processing, productivity tools, and connectors to external simulation, MATLAB and the Microsoft 365 / Power Platform stack.',
       'Each add-in is developed in close partnership with the Synera team and tuned for production use — robust, fast and engineered to slot into real automation pipelines rather than one-off scripts. Together they let designers go from geometry to a validated, optimized result without leaving the Synera canvas.',
     ],
     links: [
@@ -125,6 +125,7 @@ export const categories: Category[] = [
       'raphos-optimizer',
       'raphos-bundle',
       'raphos-tools',
+      'raphos-geometry',
       'simscale-connector',
       'matlab-connector',
       'ms-office-connector',
@@ -352,6 +353,61 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: 'raphos-geometry',
+    category: 'synera',
+    title: 'Raphos Geometry',
+    kicker: 'Synera add-in · Geometry processing',
+    tagline:
+      'Research-grade mesh, surface and point-cloud processing for Synera — the fine-grained operations a BREP kernel does not cover.',
+    summary:
+      '40 nodes for remeshing, repair, geodesics, curvature, UV unwrapping and point-cloud reconstruction, built on Geogram, Geometry Central and libigl.',
+    tags: ['Meshing', 'Point clouds', 'Geodesics', 'UV unwrapping', 'C++'],
+    links: [
+      { label: 'Synera platform', href: 'https://www.synera.io' },
+      { label: 'Geogram', href: 'https://github.com/BrunoLevy/geogram', note: 'geometry library' },
+      { label: 'Geometry Central', href: 'https://geometry-central.net', note: 'geometry-processing library' },
+      { label: 'libigl', href: 'https://libigl.github.io', note: 'geometry-processing library' },
+    ],
+    intro: [
+      'Raphos Geometry brings research-grade triangle-mesh, surface and point-cloud processing to Synera. It covers the fine-grained operations that a Parasolid BREP kernel does not: decimation and repair, geodesic distances, curvature tensors, UV parameterization, winding numbers, marching cubes, deformation and shape detection.',
+      'Under the hood is a native C++ layer built on well-respected, permissively licensed libraries — Geogram, Geometry Central, libigl and Eigen — so engineers get the speed and numerical robustness of state-of-the-art geometry code behind ordinary Synera nodes. Every node ships with a runnable example graph.',
+    ],
+    images: [
+      {
+        caption:
+          'A geodesic distance field computed across a scanned dodo mesh, banded to show distance measured along the surface',
+        src: '/img/work/geometry-geodesic.jpg',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Forty nodes in three groups',
+        paragraphs: [
+          'The palette is organized into Mesh, Analysis and Point Cloud groups, so the step from raw scan to clean, analysed geometry stays inside one workflow.',
+        ],
+        list: [
+          'Mesh: quadric decimation, hole filling, repair, self-intersection removal, alpha wrap, marching cubes, ARAP deformation and UV unwrapping (LSCM, ARAP, harmonic, auto atlas).',
+          'Analysis: curvature tensors, heat and exact geodesics, shortest geodesic paths, vector heat, winding numbers, manifold harmonics, skeletons and Hausdorff distance.',
+          'Point Cloud: normal estimation and orientation, outlier removal, denoising, simplification, Poisson and ball-pivoting reconstruction, RANSAC shape detection and region growing.',
+        ],
+      },
+      {
+        heading: 'From scan to analysis',
+        paragraphs: [
+          'Typical uses are the jobs that otherwise need a separate tool: sealing a noisy scan into a watertight solid for CFD or printing, checking a manufactured part against nominal CAD with a worst-case Hausdorff distance, routing a seam or cable along the shortest path over a curved surface, or reverse-engineering a scan into planes, spheres and cylinders.',
+        ],
+      },
+    ],
+    highlights: [
+      '40 mesh, analysis and point-cloud nodes',
+      'Native C++ on Geogram, Geometry Central and libigl',
+      'Permissive licences only, no CGAL',
+      'A runnable example graph for every node',
+    ],
+  },
+  {
     slug: 'simscale-connector',
     category: 'synera',
     title: 'SimScale Connector',
@@ -404,14 +460,14 @@ export const projects: Project[] = [
     title: 'MS Office Connector',
     kicker: 'Synera add-in · Connector',
     tagline:
-      'Read and write Excel, Word and Office documents directly from Synera workflows.',
+      'Generate Word and PowerPoint documents straight from Synera workflows — reports, slide decks and PDFs, built from your own templates.',
     summary:
-      'Connector for reading and writing Microsoft Office files (Excel, Word) from Synera.',
-    tags: ['Excel', 'Office', 'Reporting', 'Data exchange'],
+      'Connector for building and reading Microsoft Word and PowerPoint documents from Synera, with PDF export.',
+    tags: ['Word', 'PowerPoint', 'Reporting', 'Templates'],
     links: [{ label: 'Synera platform', href: 'https://www.synera.io' }],
     intro: [
-      'A great deal of engineering data still lives in spreadsheets and documents. The MS Office Connector lets Synera workflows speak Office fluently — reading inputs from Excel, writing results back, and generating documents — so the data that drives and comes out of a workflow stays connected to the tools the rest of the business uses.',
-      'It removes the copy-paste boundary between automated engineering workflows and the spreadsheets and reports people actually share.',
+      'Engineering results usually end up in a report or a slide deck. The MS Office Connector lets Synera workflows write those documents themselves — filling Word and PowerPoint templates with text, tables, images, charts and equations — so a run finishes with a document ready to share rather than a pile of exports.',
+      'It removes the copy-paste boundary between automated engineering workflows and the reports and presentations people actually read.',
     ],
     images: [
       {
@@ -426,19 +482,19 @@ export const projects: Project[] = [
       {
         heading: 'Office in, Office out',
         paragraphs: [
-          'The connector treats Office files as first-class data sources and sinks within a workflow.',
+          'The connector treats Word and PowerPoint files as first-class outputs and inputs within a workflow.',
         ],
         list: [
-          'Read parameters, load cases and tables from Excel into a workflow.',
-          'Write results, schedules and summaries back to spreadsheets.',
-          'Generate documents for reporting and hand-off.',
-          'Keep engineering automation in sync with everyday business tooling.',
+          'Write Word documents from your own templates: paragraphs, styled tables, images, captions, equations, headers and footers.',
+          'Compose PowerPoint slides from layouts, with tables, charts, images, videos and 3D models.',
+          'Read and deconstruct existing documents, replace text, and merge several files into one.',
+          'Export the result to PDF for hand-off.',
         ],
       },
     ],
     highlights: [
-      'Two-way Excel / Office integration',
-      'Automated reporting and data hand-off',
+      'Word and PowerPoint generation from templates',
+      'Automated reporting with PDF export',
       'Bridges engineering workflows and business tools',
     ],
   },
@@ -581,11 +637,11 @@ export const projects: Project[] = [
       {
         heading: 'MATLAB as a workflow node',
         paragraphs: [
-          'Inputs go in as paired name/value lists, the script runs, and the connector reads the assigned variables back out — one output per result.',
+          'Each input port is named after a MATLAB variable and carries its own type, the script runs, and the connector reads the assigned variables back out — one output per result.',
         ],
         list: [
           'Run inline MATLAB code or an external `.m` script from a Synera node.',
-          'Push typed inputs — including arrays — into the MATLAB workspace before the run.',
+          'Add one typed input port per variable (number, integer, boolean, text, or lists of them) and push it into the MATLAB workspace before the run.',
           'Scan a script to expose one output per variable it assigns.',
           'Bring existing MATLAB analyses into automated Synera workflows without a rewrite.',
         ],
