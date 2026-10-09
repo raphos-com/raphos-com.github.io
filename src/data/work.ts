@@ -575,12 +575,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A real cable harness — the kind of physical routing problem Raphos Bundle solves automatically inside Synera',
-        src: '/img/work/cable-harness.jpg',
-        ratio: '16 / 9',
-        fit: 'cover',
-        credit: 'Photo: Adamantios, CC BY-SA 3.0',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:Cable-harness-coaxials-0a.jpg',
+          'The Route Cable node in Synera bundling two cables past a bracket, bending around the obstacle within their limits',
+        src: '/img/work/bundle-route-cable.jpg',
+        ratio: '1616 / 620',
+        fit: 'contain',
       },
     ],
     sections: [
@@ -625,12 +623,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'MATLAB — the numerical-computing environment the connector runs and reads back from inside a Synera workflow',
-        src: '/img/work/matlab-logo.png',
-        ratio: '16 / 9',
+          'The Raphos MATLAB node running a linear fit: typed inputs go in, workspace variables come back as outputs and feed a chart',
+        src: '/img/work/matlab-node.jpg',
+        ratio: '1784 / 542',
         fit: 'contain',
-        credit: 'MATLAB logo (public domain), via Wikimedia Commons',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:Matlab_Logo.png',
       },
     ],
     sections: [
@@ -733,12 +729,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'Microsoft Power BI — the connector pushes Synera simulation and optimization results into its dashboards',
-        src: '/img/work/power-bi-logo.svg',
-        ratio: '16 / 9',
+          'A Synera graph that signs in to Power BI, builds a table schema, creates a push dataset and appends result rows',
+        src: '/img/work/power-bi-nodes.jpg',
+        ratio: '1800 / 1216',
         fit: 'contain',
-        credit: 'Power BI logo (public domain), via Wikimedia Commons',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:New_Power_BI_Logo.svg',
       },
     ],
     sections: [
