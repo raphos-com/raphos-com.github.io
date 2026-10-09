@@ -375,10 +375,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A geodesic distance field computed across a scanned dodo mesh, banded to show distance measured along the surface',
-        src: '/img/work/geometry-geodesic.jpg',
-        ratio: '16 / 9',
-        fit: 'cover',
+          'The Heat Geodesic Field example in Synera: distance along the surface from one vertex, coloured onto the dodo demo mesh',
+        src: '/img/work/geometry-synera.jpg',
+        ratio: '1568 / 509',
+        fit: 'contain',
       },
     ],
     sections: [
