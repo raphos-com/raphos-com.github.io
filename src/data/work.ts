@@ -144,7 +144,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'grasshopper-rhino',
-    name: 'Grasshopper / Rhino Plugins',
+    name: 'Grasshopper Plugins',
     eyebrow: 'Rhino · Grasshopper',
     title: 'Plugins for Rhino & Grasshopper.',
     lede:
@@ -1099,7 +1099,7 @@ export const projects: Project[] = [
       {
         heading: 'A paper, checked line by line',
         paragraphs: [
-          'The Nexorade folder formalises the 2013 homogenization of reciprocal frames: the four-point-bending stress field of the unit cell, the degenerate plate it produces, its compliance and stiffness, the optimal cell geometry and the Navier solution. The formalisation also flags where the text and the mathematics part ways: for instance, the equivalent isotropic plate has a Poisson ratio of +1, not the −1 stated in the paper.',
+          'The Nexorade folder formalises the 2013 homogenization of reciprocal frames: the four-point-bending stress field of the unit cell, the degenerate plate it produces, its compliance and stiffness, the optimal cell geometry and the Navier solution.',
         ],
       },
     ],
@@ -1183,7 +1183,7 @@ export const projects: Project[] = [
       {
         heading: 'Checked line by line in Lean',
         paragraphs: [
-          'The full paper is now formalised in Lean 4, in the papers/Nexorade folder of our open-source lean-mechanics library. Each closed-form result is restated and proved from first principles, with no unfinished proofs and no extra axioms. The formalisation also shows where the printed text and the mathematics disagree: the equivalent isotropic plate has a Poisson ratio of +1, not the −1 stated in the paper.',
+          'The full paper is now formalised in Lean 4, in the papers/Nexorade folder of our open-source lean-mechanics library. Each closed-form result is restated and proved from first principles, with no unfinished proofs and no extra axioms.',
         ],
       },
     ],
