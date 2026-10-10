@@ -190,6 +190,30 @@ export const categories: Category[] = [
     projectSlugs: ['raphos-lbm'],
   },
   {
+    slug: 'research',
+    name: 'Research',
+    eyebrow: 'Open source · Formal verification',
+    title: 'Research we publish in the open.',
+    lede:
+      'Machine-checked mathematics for engineering: the theory behind structural design, stated and proved in the Lean theorem prover.',
+    description: [
+      'Engineering software rests on theory that is usually trusted rather than checked: tensor identities, energy principles, closed-form solutions, homogenized stiffnesses. We formalise that theory in Lean 4 on top of Mathlib, so every statement is verified by a proof checker, down to the axioms.',
+      'The work is public on GitHub. It started from our own research on reciprocal frames, published at IASS 2013, and grew into a general library of continuum mechanics and structural theories.',
+    ],
+    links: [
+      { label: 'lean-mechanics on GitHub', href: 'https://github.com/raphos-com/lean-mechanics', note: 'github.com/raphos-com' },
+      { label: 'Research papers', href: 'https://www.researchgate.net/profile/Lorenzo-Greco', note: 'ResearchGate' },
+    ],
+    image: {
+      caption: 'The lean-mechanics library: eight areas of continuum mechanics, and a published paper formalised on top of them',
+      src: '/img/work/lean-modules.png',
+      ratio: '2 / 1',
+      fit: 'cover',
+      wide: true,
+    },
+    projectSlugs: ['lean-mechanics'],
+  },
+  {
     slug: 'websites',
     name: 'Websites & Products',
     eyebrow: 'Data-science products',
@@ -1000,6 +1024,85 @@ export const projects: Project[] = [
       'Forces, flow fields and surface pressure',
       '24-case validation suite',
       'Standalone C API or Synera add-in',
+    ],
+  },
+  // ---------------- Research ----------------
+  {
+    slug: 'lean-mechanics',
+    category: 'research',
+    title: 'lean-mechanics',
+    kicker: 'Open source · Lean 4 + Mathlib',
+    tagline:
+      'Continuum mechanics and structural theories, formally verified in Lean 4, with a published paper on reciprocal frames proved result by result.',
+    summary:
+      'Open-source Lean 4 library: tensors, kinematics, stress, constitutive laws, elastostatics, beams and plates, plus a formalised 2013 paper. No sorry, no axioms.',
+    tags: ['Lean 4', 'Mathlib', 'Formal verification', 'Continuum mechanics', 'Beams & plates', 'Homogenization'],
+    links: [
+      { label: 'View on GitHub', href: 'https://github.com/raphos-com/lean-mechanics' },
+      {
+        label: 'The 2013 paper',
+        href: 'https://www.researchgate.net/publication/270451899_Investigation_of_the_elastic_behavior_of_reciprocal_systems_using_homogenization_techniques',
+        note: 'Greco, Lebée, Douthe · ResearchGate',
+      },
+    ],
+    intro: [
+      'lean-mechanics is an open-source library of continuum mechanics and structural theories written in Lean 4, the programming language and proof assistant, on top of the Mathlib mathematics library. Every definition is stated precisely and every theorem carries a proof that Lean checks mechanically: the main branch contains no sorry (unfinished proofs) and declares no axioms beyond Lean’s standard three.',
+      'Alongside the library sits a formalisation of our own paper on reciprocal frames: Greco, Lebée and Douthe (2013), which homogenizes the square nexorade as a plate. Each closed-form result in the paper is now a Lean theorem.',
+    ],
+    images: [
+      {
+        caption: 'Two theorems from the paper’s formalisation: the bending moment in the members is never below 2√2 − 2 of its reference value, and reaches that bound at a/l = 1 − √2/2',
+        src: '/img/work/lean-proof.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'The library’s modules, from tensor algebra to plates, and the paper built on them',
+        src: '/img/work/lean-modules.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+      },
+      {
+        caption: 'The design trade-off the formalisation proves: the stress optimum and the stiffness optimum sit at different cell ratios, and choosing one means 7% more deflection or 21% more bending moment',
+        src: '/img/work/lean-nexorade-optima.png',
+        ratio: '5 / 2',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'What the library covers',
+        paragraphs: [
+          'About 9,000 lines of Lean and nearly 500 theorems, organised the way a continuum-mechanics textbook is. Results are stated coordinate-free and, where the dimension does not matter, in any finite dimension.',
+        ],
+        list: [
+          'Tensor algebra: symmetric and skew parts, invariants and Cayley–Hamilton, the spectral theorem, polar decomposition F = RU = VR, and the representation of isotropic fourth-order tensors.',
+          'Kinematics and stress: strain measures, objectivity, Saint-Venant compatibility, Cauchy’s theorem by the tetrahedron argument, and the balance laws giving div σ + b = 0 and σ = σᵀ.',
+          'Constitutive theory: frame indifference, the Rivlin–Ericksen representation theorem, and Saint Venant–Kirchhoff, neo-Hookean and Mooney–Rivlin materials with their linearisations.',
+          'Linear elastostatics: Clapeyron, Betti reciprocity, Kirchhoff uniqueness, minimum potential energy and Lax–Milgram well-posedness.',
+          'Beams and plates: Euler–Bernoulli and Timoshenko beams with the limit between them, the Euler buckling load, and Kirchhoff–Love and Mindlin–Reissner plates with Navier solutions.',
+        ],
+      },
+      {
+        heading: 'Assumptions written down, not hidden',
+        paragraphs: [
+          'Where Mathlib does not yet have the analysis a result needs, such as the divergence theorem on general domains or Korn’s inequality, the library states the missing fact as an explicit hypothesis, lists it in a public GAPS file, and proves the hypothesis can be met by a concrete example. A reader always knows exactly what has been proved and from what.',
+        ],
+      },
+      {
+        heading: 'A paper, checked line by line',
+        paragraphs: [
+          'The Nexorade folder formalises the 2013 homogenization of reciprocal frames: the four-point-bending stress field of the unit cell, the degenerate plate it produces, its compliance and stiffness, the optimal cell geometry and the Navier solution. The formalisation also flags where the text and the mathematics part ways: for instance, the equivalent isotropic plate has a Poisson ratio of +1, not the −1 stated in the paper.',
+        ],
+      },
+    ],
+    highlights: [
+      'Lean 4 on Mathlib, open source on GitHub',
+      'About 9,000 lines and nearly 500 theorems',
+      'No sorry, no extra axioms, enforced in CI',
+      'Tensors to beams and plates',
+      'A published paper formalised end to end',
     ],
   },
   // ---------------- Websites ----------------
