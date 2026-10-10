@@ -61,8 +61,9 @@ const description = `${category.name} by Raphos — ${category.lede}`;
           caption={category.image.caption}
           ratio={category.image.ratio}
           fit={category.image.fit}
+          video={category.image.video}
           loading="eager"
-          width="half"
+          width={category.image.wide ? 'full' : 'half'}
         />
       ) : (
         <ImagePlaceholder caption={category.image.caption} ratio={category.image.ratio} />
@@ -92,6 +93,9 @@ const description = `${category.name} by Raphos — ${category.lede}`;
             kicker={p.kicker}
             href={withBase(`/work/${category.slug}/${p.slug}`)}
             tags={p.tags}
+            image={(p.thumbnail ?? p.images[0]?.src) ? withBase(p.thumbnail ?? p.images[0].src) : undefined}
+            imageAlt={p.images[0]?.caption}
+            imageFit={p.thumbnail ? 'cover' : p.images[0]?.fit}
           >
             {p.summary}
           </ProjectCard>

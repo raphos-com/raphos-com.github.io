@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import ImagePlaceholder from '../../../components/ImagePlaceholder.astro';
 import Figure from '../../../components/Figure.astro';
+import FlowViewer from '../../../components/FlowViewer.astro';
 import { withBase } from '../../../lib/url';
 import { projects, getCategory, siblingProjects } from '../../../data/work';
 
@@ -73,12 +74,21 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
               fit={heroImage.fit}
               credit={heroImage.credit}
               creditHref={heroImage.creditHref}
+              video={heroImage.video}
               loading="eager"
-              width="half"
+              width={heroImage.wide ? 'full' : 'half'}
             />
           ) : (
             <ImagePlaceholder caption={heroImage.caption} ratio={heroImage.ratio} />
           )}
+        </div>
+      </section>
+    )}
+
+    {project.viewer && (
+      <section class="section--tight">
+        <div class="container container-wide">
+          <FlowViewer data={project.viewer.data} poster={project.viewer.poster} caption={project.viewer.caption} />
         </div>
       </section>
     )}
@@ -111,6 +121,7 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
                       fit={inlineImages[i].fit}
                       credit={inlineImages[i].credit}
                       creditHref={inlineImages[i].creditHref}
+                      video={inlineImages[i].video}
                     />
                   ) : (
                     <ImagePlaceholder

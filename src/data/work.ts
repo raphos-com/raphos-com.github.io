@@ -43,6 +43,10 @@ export interface ImageSlot {
   credit?: string;
   /** Optional URL the credit links to (e.g. the source/licence page). */
   creditHref?: string;
+  /** Optional looping video (root-absolute .mp4); `src` is then its poster frame. */
+  video?: string;
+  /** Show the hero at full container width instead of half (wide simulation renders). */
+  wide?: boolean;
 }
 
 export interface Project {
@@ -67,6 +71,10 @@ export interface Project {
   highlights: string[];
   /** Optional labelled feature thumbnails, shown as a strip on the page. */
   gallery?: GalleryItem[];
+  /** Card thumbnail, when the hero (e.g. a wide video poster) crops badly in a card. */
+  thumbnail?: string;
+  /** Interactive 3D flow view (FlowViewer), shown full width under the hero. */
+  viewer?: { data: string; poster: string; caption: string };
 }
 
 /** A small labelled image in a feature strip. */
@@ -107,7 +115,7 @@ export const categories: Category[] = [
     lede:
       'A suite of Raphos add-ins that bring physics, optimization and connectivity to Synera — the visual-programming and automation platform for engineering.',
     description: [
-      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, an optimizer, automatic cable and pipe routing, productivity tools, and connectors to external simulation, MATLAB and the Microsoft 365 / Power Platform stack.',
+      'Synera (formerly ELISE) is a low-code, visual-programming platform that lets engineering teams capture their know-how as automated workflows — connecting CAD, CAE, PLM and data into a single, repeatable graph. Raphos builds and maintains a family of add-ins that extend Synera with capabilities our clients asked for: a fast physics solver, an optimizer, automatic cable and pipe routing, research-grade mesh and point-cloud processing, productivity tools, and connectors to external simulation, MATLAB and the Microsoft 365 / Power Platform stack.',
       'Each add-in is developed in close partnership with the Synera team and tuned for production use — robust, fast and engineered to slot into real automation pipelines rather than one-off scripts. Together they let designers go from geometry to a validated, optimized result without leaving the Synera canvas.',
     ],
     links: [
@@ -125,6 +133,7 @@ export const categories: Category[] = [
       'raphos-optimizer',
       'raphos-bundle',
       'raphos-tools',
+      'raphos-geometry',
       'simscale-connector',
       'matlab-connector',
       'ms-office-connector',
@@ -156,6 +165,29 @@ export const categories: Category[] = [
       fit: 'cover',
     },
     projectSlugs: ['dodo', 'capybara'],
+  },
+  {
+    slug: 'cfd',
+    name: 'CFD',
+    eyebrow: 'Computational fluid dynamics',
+    title: 'A state-of-the-art lattice-Boltzmann solver.',
+    lede:
+      'Our own GPU-accelerated CFD engine for external aerodynamics, internal flows and heat transfer — fast enough to sit inside a design loop.',
+    description: [
+      'Raphos LBM is a lattice-Boltzmann CFD engine written from scratch at Raphos. It uses the methods behind the current generation of high-performance LBM codes — cumulant collision on a D3Q27 lattice, in-place AA streaming, compressed FP16 storage and interpolated wall boundaries — so that transient, turbulent flows around real geometry run on a single GPU or a laptop CPU.',
+      'The engine is a standalone C++ library with a plain C API, so it can be embedded in any tool. It also ships as a Synera add-in, where a virtual wind tunnel is a handful of nodes on the canvas.',
+    ],
+    links: [],
+    image: {
+      caption:
+        'Raphos LBM: a dodo in a virtual wind tunnel at 10 m/s, seen from above, with vorticity on a horizontal plane through the body (rendered from the standalone engine)',
+      src: '/img/work/lbm-dodo-top.jpg',
+      video: '/img/work/lbm-dodo-top.mp4',
+      ratio: '3 / 1',
+      fit: 'cover',
+      wide: true,
+    },
+    projectSlugs: ['raphos-lbm'],
   },
   {
     slug: 'websites',
@@ -352,6 +384,61 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: 'raphos-geometry',
+    category: 'synera',
+    title: 'Raphos Geometry',
+    kicker: 'Synera add-in · Geometry processing',
+    tagline:
+      'Research-grade mesh, surface and point-cloud processing for Synera — the fine-grained operations a BREP kernel does not cover.',
+    summary:
+      '40 nodes for remeshing, repair, geodesics, curvature, UV unwrapping and point-cloud reconstruction, built on Geogram, Geometry Central and libigl.',
+    tags: ['Meshing', 'Point clouds', 'Geodesics', 'UV unwrapping', 'C++'],
+    links: [
+      { label: 'Synera platform', href: 'https://www.synera.io' },
+      { label: 'Geogram', href: 'https://github.com/BrunoLevy/geogram', note: 'geometry library' },
+      { label: 'Geometry Central', href: 'https://geometry-central.net', note: 'geometry-processing library' },
+      { label: 'libigl', href: 'https://libigl.github.io', note: 'geometry-processing library' },
+    ],
+    intro: [
+      'Raphos Geometry brings research-grade triangle-mesh, surface and point-cloud processing to Synera. It covers the fine-grained operations that a Parasolid BREP kernel does not: decimation and repair, geodesic distances, curvature tensors, UV parameterization, winding numbers, marching cubes, deformation and shape detection.',
+      'Under the hood is a native C++ layer built on well-respected, permissively licensed libraries — Geogram, Geometry Central, libigl and Eigen — so engineers get the speed and numerical robustness of state-of-the-art geometry code behind ordinary Synera nodes. Every node ships with a runnable example graph.',
+    ],
+    images: [
+      {
+        caption:
+          'The Heat Geodesic Field example in Synera: distance along the surface from one vertex, coloured onto the dodo demo mesh',
+        src: '/img/work/geometry-synera.jpg',
+        ratio: '1568 / 509',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Forty nodes in three groups',
+        paragraphs: [
+          'The palette is organized into Mesh, Analysis and Point Cloud groups, so the step from raw scan to clean, analysed geometry stays inside one workflow.',
+        ],
+        list: [
+          'Mesh: quadric decimation, hole filling, repair, self-intersection removal, alpha wrap, marching cubes, ARAP deformation and UV unwrapping (LSCM, ARAP, harmonic, auto atlas).',
+          'Analysis: curvature tensors, heat and exact geodesics, shortest geodesic paths, vector heat, winding numbers, manifold harmonics, skeletons and Hausdorff distance.',
+          'Point Cloud: normal estimation and orientation, outlier removal, denoising, simplification, Poisson and ball-pivoting reconstruction, RANSAC shape detection and region growing.',
+        ],
+      },
+      {
+        heading: 'From scan to analysis',
+        paragraphs: [
+          'Typical uses are the jobs that otherwise need a separate tool: sealing a noisy scan into a watertight solid for CFD or printing, checking a manufactured part against nominal CAD with a worst-case Hausdorff distance, routing a seam or cable along the shortest path over a curved surface, or reverse-engineering a scan into planes, spheres and cylinders.',
+        ],
+      },
+    ],
+    highlights: [
+      '40 mesh, analysis and point-cloud nodes',
+      'Native C++ on Geogram, Geometry Central and libigl',
+      'Permissive licences only, no CGAL',
+      'A runnable example graph for every node',
+    ],
+  },
+  {
     slug: 'simscale-connector',
     category: 'synera',
     title: 'SimScale Connector',
@@ -404,14 +491,14 @@ export const projects: Project[] = [
     title: 'MS Office Connector',
     kicker: 'Synera add-in · Connector',
     tagline:
-      'Read and write Excel, Word and Office documents directly from Synera workflows.',
+      'Generate Word and PowerPoint documents straight from Synera workflows — reports, slide decks and PDFs, built from your own templates.',
     summary:
-      'Connector for reading and writing Microsoft Office files (Excel, Word) from Synera.',
-    tags: ['Excel', 'Office', 'Reporting', 'Data exchange'],
+      'Connector for building and reading Microsoft Word and PowerPoint documents from Synera, with PDF export.',
+    tags: ['Word', 'PowerPoint', 'Reporting', 'Templates'],
     links: [{ label: 'Synera platform', href: 'https://www.synera.io' }],
     intro: [
-      'A great deal of engineering data still lives in spreadsheets and documents. The MS Office Connector lets Synera workflows speak Office fluently — reading inputs from Excel, writing results back, and generating documents — so the data that drives and comes out of a workflow stays connected to the tools the rest of the business uses.',
-      'It removes the copy-paste boundary between automated engineering workflows and the spreadsheets and reports people actually share.',
+      'Engineering results usually end up in a report or a slide deck. The MS Office Connector lets Synera workflows write those documents themselves — filling Word and PowerPoint templates with text, tables, images, charts and equations — so a run finishes with a document ready to share rather than a pile of exports.',
+      'It removes the copy-paste boundary between automated engineering workflows and the reports and presentations people actually read.',
     ],
     images: [
       {
@@ -426,19 +513,19 @@ export const projects: Project[] = [
       {
         heading: 'Office in, Office out',
         paragraphs: [
-          'The connector treats Office files as first-class data sources and sinks within a workflow.',
+          'The connector treats Word and PowerPoint files as first-class outputs and inputs within a workflow.',
         ],
         list: [
-          'Read parameters, load cases and tables from Excel into a workflow.',
-          'Write results, schedules and summaries back to spreadsheets.',
-          'Generate documents for reporting and hand-off.',
-          'Keep engineering automation in sync with everyday business tooling.',
+          'Write Word documents from your own templates: paragraphs, styled tables, images, captions, equations, headers and footers.',
+          'Compose PowerPoint slides from layouts, with tables, charts, images, videos and 3D models.',
+          'Read and deconstruct existing documents, replace text, and merge several files into one.',
+          'Export the result to PDF for hand-off.',
         ],
       },
     ],
     highlights: [
-      'Two-way Excel / Office integration',
-      'Automated reporting and data hand-off',
+      'Word and PowerPoint generation from templates',
+      'Automated reporting with PDF export',
       'Bridges engineering workflows and business tools',
     ],
   },
@@ -519,12 +606,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'A real cable harness — the kind of physical routing problem Raphos Bundle solves automatically inside Synera',
-        src: '/img/work/cable-harness.jpg',
-        ratio: '16 / 9',
-        fit: 'cover',
-        credit: 'Photo: Adamantios, CC BY-SA 3.0',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:Cable-harness-coaxials-0a.jpg',
+          'The Route Cable node in Synera bundling two cables past a bracket, bending around the obstacle within their limits',
+        src: '/img/work/bundle-route-cable.jpg',
+        ratio: '1616 / 620',
+        fit: 'contain',
       },
     ],
     sections: [
@@ -569,23 +654,21 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'MATLAB — the numerical-computing environment the connector runs and reads back from inside a Synera workflow',
-        src: '/img/work/matlab-logo.png',
-        ratio: '16 / 9',
+          'The Raphos MATLAB node running a linear fit: typed inputs go in, workspace variables come back as outputs and feed a chart',
+        src: '/img/work/matlab-node.jpg',
+        ratio: '1784 / 542',
         fit: 'contain',
-        credit: 'MATLAB logo (public domain), via Wikimedia Commons',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:Matlab_Logo.png',
       },
     ],
     sections: [
       {
         heading: 'MATLAB as a workflow node',
         paragraphs: [
-          'Inputs go in as paired name/value lists, the script runs, and the connector reads the assigned variables back out — one output per result.',
+          'Each input port is named after a MATLAB variable and carries its own type, the script runs, and the connector reads the assigned variables back out — one output per result.',
         ],
         list: [
           'Run inline MATLAB code or an external `.m` script from a Synera node.',
-          'Push typed inputs — including arrays — into the MATLAB workspace before the run.',
+          'Add one typed input port per variable (number, integer, boolean, text, or lists of them) and push it into the MATLAB workspace before the run.',
           'Scan a script to expose one output per variable it assigns.',
           'Bring existing MATLAB analyses into automated Synera workflows without a rewrite.',
         ],
@@ -677,12 +760,10 @@ export const projects: Project[] = [
     images: [
       {
         caption:
-          'Microsoft Power BI — the connector pushes Synera simulation and optimization results into its dashboards',
-        src: '/img/work/power-bi-logo.svg',
-        ratio: '16 / 9',
+          'A Synera graph that signs in to Power BI, builds a table schema, creates a push dataset and appends result rows',
+        src: '/img/work/power-bi-nodes.jpg',
+        ratio: '1800 / 1216',
         fit: 'contain',
-        credit: 'Power BI logo (public domain), via Wikimedia Commons',
-        creditHref: 'https://commons.wikimedia.org/wiki/File:New_Power_BI_Logo.svg',
       },
     ],
     sections: [
@@ -831,6 +912,96 @@ export const projects: Project[] = [
     ],
   },
 
+  // ---------------- CFD ----------------
+  {
+    slug: 'raphos-lbm',
+    category: 'cfd',
+    title: 'Raphos LBM',
+    kicker: 'CFD engine · Standalone & Synera add-in',
+    thumbnail: '/img/work/lbm-dodo-streamlines.jpg',
+    viewer: {
+      data: '/img/work/lbm-dodo-flow.bin',
+      poster: '/img/work/lbm-dodo-streamlines.jpg',
+      caption:
+        'Interactive: time-averaged streamlines around the dodo, with particles travelling at the simulated mean speed (slowed down). Drag to look around.',
+    },
+    tagline:
+      'A state-of-the-art lattice-Boltzmann solver for wind tunnels, internal flows and heat transfer, on GPU or CPU.',
+    summary:
+      'Lattice-Boltzmann CFD engine: cumulant D3Q27, LES, FP16 storage, conjugate heat transfer. CUDA or AVX2, standalone or in Synera.',
+    tags: ['Lattice Boltzmann', 'Cumulant D3Q27', 'LES', 'CUDA', 'AVX2', 'Conjugate heat transfer', 'C++20'],
+    links: [],
+    intro: [
+      'Raphos LBM is our own computational fluid dynamics engine. It solves the lattice-Boltzmann equations on a uniform grid around any mesh, giving transient flow fields, forces and surface pressure without a meshing step: drop in an STL, set the wind speed and run.',
+      'The video and the 3D view above were produced with the standalone engine, outside Synera: a dodo standing on a moving ground plane in a 10 m/s wind, 6.6 million cells with the LES turbulence model. The whole run took about 11 minutes on four CPU cores, at around 60 million lattice updates per second.',
+    ],
+    images: [
+      {
+        caption:
+          'Side view: vorticity on the centre plane as the wake sheds behind the body',
+        src: '/img/work/lbm-dodo-side.jpg',
+        video: '/img/work/lbm-dodo-side.mp4',
+        ratio: '3 / 1',
+        fit: 'cover',
+        wide: true,
+      },
+      {
+        caption: 'Time-averaged streamlines traced through the mean flow; amber marks the air caught in the recirculating wake',
+        src: '/img/work/lbm-dodo-streamlines.jpg',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+      {
+        caption: 'Top view: vorticity on a horizontal plane through the body',
+        src: '/img/work/lbm-dodo-top.jpg',
+        video: '/img/work/lbm-dodo-top.mp4',
+        ratio: '3 / 1',
+        fit: 'cover',
+      },
+      {
+        caption: 'Time-averaged pressure on the centre plane: stagnation in front of the body (amber), suction over the head and in the wake (blue)',
+        src: '/img/work/lbm-dodo-pressure.jpg',
+        ratio: '3 / 1',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'State-of-the-art numerics',
+        paragraphs: [
+          'The engine implements the methods used by today’s fastest lattice-Boltzmann codes, and every one of them is checked against analytic solutions and published benchmarks.',
+        ],
+        list: [
+          'Cumulant collision on D3Q27 by default, stable and plausible even on under-resolved flows at Re = 10⁶; regularized, TRT and BGK operators for moderate Reynolds numbers.',
+          'Smagorinsky large-eddy simulation for turbulent flows.',
+          'In-place AA streaming with populations stored in FP32 or compressed FP16, halving memory traffic.',
+          'Interpolated (Bouzidi) bounce-back with wall distances from the mesh, moving walls and slip walls.',
+          'Galilean-invariant momentum exchange for forces on each body, every step.',
+        ],
+      },
+      {
+        heading: 'Heat transfer',
+        paragraphs: [
+          'A coupled energy lattice adds natural and forced convection: Boussinesq buoyancy, turbulent diffusivity from the LES model, and conjugate conduction through solids with per-body heat generation. That makes it suitable for electronics cooling, heated enclosures and thermal comfort studies as well as aerodynamics.',
+        ],
+      },
+      {
+        heading: 'GPU or CPU, standalone or in Synera',
+        paragraphs: [
+          'The physics is written once and compiled both for NVIDIA GPUs (CUDA) and for AVX2 CPUs, which process eight cells at a time; the CPU backend is the reference the GPU is tested against. The core is a C++20 library with a C API, so it embeds in any pipeline. In Synera it becomes a set of nodes: build a case, run it, and read back forces, flow fields and surface pressure.',
+          'A validation gate of 24 cases runs on every change, including Poiseuille flow, Taylor–Green vortices, the lid-driven cavity against Ghia et al. and natural convection against de Vahl Davis.',
+        ],
+      },
+    ],
+    highlights: [
+      'Cumulant D3Q27 lattice-Boltzmann with LES',
+      'NVIDIA GPU (CUDA) or AVX2 CPU backend',
+      'Conjugate heat transfer and buoyancy',
+      'Forces, flow fields and surface pressure',
+      '24-case validation suite',
+      'Standalone C API or Synera add-in',
+    ],
+  },
   // ---------------- Websites ----------------
   {
     slug: 'babelotheca',
