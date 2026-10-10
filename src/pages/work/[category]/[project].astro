@@ -51,9 +51,9 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
             {project.links.map((l, i) => (
               <a
                 class:list={['btn', i === 0 ? 'btn--primary' : 'btn--ghost']}
-                href={l.href}
-                rel="noopener"
-                target="_blank"
+                href={l.href.startsWith('/') ? withBase(l.href) : l.href}
+                rel={l.href.startsWith('/') ? undefined : 'noopener'}
+                target={l.href.startsWith('/') ? undefined : '_blank'}
               >
                 {l.label} <span class="arrow">→</span>
               </a>
@@ -158,8 +158,12 @@ const description = `${project.title} by Raphos — ${project.tagline}`;
               <ul class="aside-links">
                 {project.links.map((l) => (
                   <li>
-                    <a href={l.href} rel="noopener" target="_blank">
-                      {l.label}<span class="ext" aria-hidden="true">↗</span>
+                    <a
+                      href={l.href.startsWith('/') ? withBase(l.href) : l.href}
+                      rel={l.href.startsWith('/') ? undefined : 'noopener'}
+                      target={l.href.startsWith('/') ? undefined : '_blank'}
+                    >
+                      {l.label}{!l.href.startsWith('/') && <span class="ext" aria-hidden="true">↗</span>}
                     </a>
                     {l.note && <span class="ref-note">{l.note}</span>}
                   </li>

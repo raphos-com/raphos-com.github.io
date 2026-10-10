@@ -12,6 +12,7 @@ const research = [
     kicker: 'Signal processing',
     body:
       'Field instrumentation of a high-rise: Arduino sensing of wind excitation and tower acceleration, statistical analysis of ~660M data points, and bespoke apps deriving transfer functions and correlations in real time.',
+    href: '/work/research/tall-building-wind-response',
   },
   {
     title: 'Free-form glass-panel optimization',
@@ -24,19 +25,21 @@ const research = [
     kicker: 'AI · Optimization',
     body:
       'Machine-learning and optimization algorithms that suggest steel-joint connections with high accuracy, wrapped in an interactive design framework.',
+    href: '/work/research/steel-connections-ml',
   },
   {
     title: 'Reciprocal frame systems & gridshells',
     kicker: 'Research',
     body:
-      'Homogenization studies of the elastic behaviour of reciprocal systems and computational architecture work, presented at IASS 2013 and Advances in Architectural Geometry 2014.',
+      'Homogenization studies of the elastic behaviour of reciprocal systems and computational architecture work, presented at IASS 2013 and Advances in Architectural Geometry 2014. The 2013 paper is now formally verified in Lean.',
+    href: '/work/research/reciprocal-systems-homogenization',
   },
 ];
 ---
 
 <BaseLayout
   title="Work — Raphos"
-  description="Selected Raphos work, organised like the studio itself: Synera add-ins, Rhino/Grasshopper plugins (Dodo, Capybara), data-science web products (Babelotheca, CityDataLab, Ariadne's Gallery) and applied research."
+  description="Selected Raphos work, organised like the studio itself: Synera add-ins, Rhino/Grasshopper plugins (Dodo, Capybara), data-science web products (Babelotheca, CityDataLab, Ariadne's Gallery), the Raphos LBM CFD solver, and research including the lean-mechanics Lean library."
   path="/work"
 >
   <section class="section page-head-section">
@@ -46,7 +49,7 @@ const research = [
       <p class="lede page-lede">
         From plugins used by designers worldwide to data-science products and
         instrumented buildings — a sample of what we build and ship, grouped into
-        four areas. Each project has its own page.
+        five areas. Each project has its own page.
       </p>
 
       <nav class="cat-jump" aria-label="Work areas">
@@ -109,7 +112,7 @@ const research = [
       </div>
       <div class="grid grid--2">
         {research.map((r) => (
-          <ProjectCard title={r.title} kicker={r.kicker}>
+          <ProjectCard title={r.title} kicker={r.kicker} href={r.href ? withBase(r.href) : undefined}>
             {r.body}
           </ProjectCard>
         ))}
