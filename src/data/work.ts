@@ -192,13 +192,14 @@ export const categories: Category[] = [
   {
     slug: 'research',
     name: 'Research',
-    eyebrow: 'Open source · Formal verification',
+    eyebrow: 'Papers · Open source',
     title: 'Research we publish in the open.',
     lede:
-      'Machine-checked mathematics for engineering: the theory behind structural design, stated and proved in the Lean theorem prover.',
+      'Our published papers, from reciprocal frames to tall buildings in the wind, and the theory behind structural design proved in the Lean theorem prover.',
     description: [
       'Engineering software rests on theory that is usually trusted rather than checked: tensor identities, energy principles, closed-form solutions, homogenized stiffnesses. We formalise that theory in Lean 4 on top of Mathlib, so every statement is verified by a proof checker, down to the axioms.',
       'The work is public on GitHub. It started from our own research on reciprocal frames, published at IASS 2013, and grew into a general library of continuum mechanics and structural theories.',
+      'Each of our papers has its own page below: structural homogenization, computational architecture, gridshell layout, machine learning for steel design, and full-scale wind monitoring of a London tower.',
     ],
     links: [
       { label: 'lean-mechanics on GitHub', href: 'https://github.com/raphos-com/lean-mechanics', note: 'github.com/raphos-com' },
@@ -211,7 +212,15 @@ export const categories: Category[] = [
       fit: 'cover',
       wide: true,
     },
-    projectSlugs: ['lean-mechanics'],
+    projectSlugs: [
+      'lean-mechanics',
+      'reciprocal-systems-homogenization',
+      'scuola-normale-roof',
+      'quad-gridshell-stress-curvature',
+      'steel-connections-ml',
+      'tall-building-wind-response',
+      'tall-building-aeroelastic',
+    ],
   },
   {
     slug: 'websites',
@@ -1039,11 +1048,8 @@ export const projects: Project[] = [
     tags: ['Lean 4', 'Mathlib', 'Formal verification', 'Continuum mechanics', 'Beams & plates', 'Homogenization'],
     links: [
       { label: 'View on GitHub', href: 'https://github.com/raphos-com/lean-mechanics' },
-      {
-        label: 'The 2013 paper',
-        href: 'https://www.researchgate.net/publication/270451899_Investigation_of_the_elastic_behavior_of_reciprocal_systems_using_homogenization_techniques',
-        note: 'Greco, Lebée, Douthe · ResearchGate',
-      },
+      { label: 'The 2013 paper', href: '/work/research/reciprocal-systems-homogenization', note: 'Greco, Lebée, Douthe · IASS 2013' },
+      { label: 'Its formalisation', href: 'https://github.com/raphos-com/lean-mechanics/tree/main/papers/Nexorade', note: 'papers/Nexorade on GitHub' },
     ],
     intro: [
       'lean-mechanics is an open-source library of continuum mechanics and structural theories written in Lean 4, the programming language and proof assistant, on top of the Mathlib mathematics library. Every definition is stated precisely and every theorem carries a proof that Lean checks mechanically: the main branch contains no sorry (unfinished proofs) and declares no axioms beyond Lean’s standard three.',
@@ -1103,6 +1109,349 @@ export const projects: Project[] = [
       'No sorry, no extra axioms, enforced in CI',
       'Tensors to beams and plates',
       'A published paper formalised end to end',
+    ],
+  },
+  {
+    slug: 'reciprocal-systems-homogenization',
+    category: 'research',
+    title: 'Elastic behaviour of reciprocal systems by homogenization',
+    kicker: 'Paper · IASS 2013',
+    tagline:
+      'How stiff is a reciprocal frame? A homogenization model that turns the square nexorade into an equivalent plate, now formally verified in Lean.',
+    summary:
+      'Greco, Lebée and Douthe (2013): the square nexorade homogenized as a plate, with closed-form stiffness and an optimal cell geometry. Every result is now a Lean theorem.',
+    tags: ['Reciprocal frames', 'Nexorades', 'Homogenization', 'Plates', 'Lean 4'],
+    links: [
+      { label: 'Lean formalisation', href: 'https://github.com/raphos-com/lean-mechanics/tree/main/papers/Nexorade', note: 'lean-mechanics/papers/Nexorade' },
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/270451899_Investigation_of_the_elastic_behavior_of_reciprocal_systems_using_homogenization_techniques',
+        note: 'Greco, Lebée, Douthe · ResearchGate',
+      },
+      { label: 'The lean-mechanics library', href: '/work/research/lean-mechanics', note: 'Project page' },
+    ],
+    intro: [
+      'Investigation of the elastic behavior of reciprocal systems using homogenization techniques, by Lorenzo Greco, Arthur Lebée and Cyril Douthe, presented at IASS 2013.',
+      'A reciprocal frame, or nexorade, is a structure of short members that support one another in a closed loop, so that no member reaches across the whole span. The paper replaces the square nexorade with an equivalent continuous plate: it solves the unit cell in four-point bending, derives the plate’s compliance and stiffness in closed form, finds the cell geometry that minimises bending in the members, and solves the plate under load with the Navier method.',
+      'The full paper is now formalised in Lean 4, in the papers/Nexorade folder of our open-source lean-mechanics library. Each closed-form result is a theorem whose proof the computer checks.',
+    ],
+    images: [
+      {
+        caption: 'Plan of a square nexorade: every bar rests on its neighbours, and the repeating unit cell is what the homogenization solves',
+        src: '/img/work/paper-nexorade-plan.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'The stress optimum and the stiffness optimum of the square nexorade sit at different cell ratios, both proved in Lean',
+        src: '/img/work/lean-nexorade-optima.png',
+        ratio: '5 / 2',
+        fit: 'contain',
+      },
+      {
+        caption: 'The minimum-moment result as it reads in the Lean formalisation',
+        src: '/img/work/lean-proof.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'From a frame to a plate',
+        paragraphs: [
+          'Homogenization treats a repeating structure as a continuum whose properties come from one representative cell. For the square nexorade, the result is a degenerate plate: it carries bending but behaves very differently from a solid slab, and the paper gives its stiffness in terms of the member geometry.',
+        ],
+        list: [
+          'Unit-cell stress field in four-point bending.',
+          'Equivalent plate compliance and stiffness in closed form.',
+          'The cell ratio that minimises member bending: a/l = 1 − √2/2.',
+          'Navier solution of the homogenized plate under load.',
+        ],
+      },
+      {
+        heading: 'Checked line by line in Lean',
+        paragraphs: [
+          'The formalisation in lean-mechanics restates each result and proves it from first principles, with no unfinished proofs and no extra axioms. It also shows where the printed text and the mathematics disagree: the equivalent isotropic plate has a Poisson ratio of +1, not the −1 stated in the paper.',
+        ],
+      },
+    ],
+    highlights: [
+      'IASS 2013, with Arthur Lebée and Cyril Douthe',
+      'Square nexorade homogenized as a plate',
+      'Closed-form stiffness and optimal geometry',
+      'Formalised in Lean: papers/Nexorade',
+    ],
+  },
+  {
+    slug: 'scuola-normale-roof',
+    category: 'research',
+    title: 'A free-form roof for the Scuola Normale Superiore',
+    kicker: 'Paper · AAG 2014',
+    tagline:
+      'A complete digital workflow, from form to fabrication, for a glass and steel roof over a historic courtyard in Pisa.',
+    summary:
+      'Greco, Bevilacqua and Croce (2014): computational design and optimisation of a free-form glass and steel roof for the Scuola Normale Superiore courtyard.',
+    tags: ['Computational architecture', 'Free-form roofs', 'Glass & steel', 'Optimisation'],
+    links: [
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/270452004_Computational_Architecture_Development_Optimization_and_Design_Case_study_of_a_glass_and_steel_roof_for_the_Scuola_Normale_Superiore%27s_courtyard',
+        note: 'Greco, Bevilacqua, Croce · ResearchGate',
+      },
+      { label: 'University of Pisa record', href: 'https://hdl.handle.net/11568/639863', note: 'arpi.unipi.it' },
+    ],
+    intro: [
+      'Computational Architecture: Development, Optimization and Design. Case study of a glass and steel roof for the Scuola Normale Superiore’s courtyard, by Lorenzo Greco, Marco Giorgio Bevilacqua and Pietro Croce, presented at Advances in Architectural Geometry 2014.',
+      'The work follows one project through a fully digital workflow: generating a free-form roof over the courtyard of the Scuola Normale Superiore’s main building in Pisa, optimising its geometry for structure and cladding, and carrying the result through to a buildable glass and steel design.',
+    ],
+    images: [
+      {
+        caption: 'Illustration: a free-form roof over a rectangular courtyard, its glass panels shaded by how far each departs from flat',
+        src: '/img/work/paper-roof-panels.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'Free-form glass panels coloured by how far each departs from flat, the input to panel optimisation',
+        src: '/img/site/geometry.jpg',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'One model from start to finish',
+        paragraphs: [
+          'The point of the workflow is that the same digital model carries the project from the first form to the structural checks and the cladding layout, so a change in shape flows through to every later step instead of being redrawn by hand.',
+        ],
+      },
+      {
+        heading: 'Why it matters',
+        paragraphs: [
+          'Doubly curved glass is expensive: every distinct curved panel needs its own mould. Rationalising a free-form surface so that panels are flatter and more alike is what turns a striking shape into one that can be built on budget. The same thinking runs through our later free-form glass-panel work.',
+        ],
+      },
+    ],
+    highlights: [
+      'Advances in Architectural Geometry 2014',
+      'With Marco Giorgio Bevilacqua and Pietro Croce',
+      'Form, optimisation and design in one digital workflow',
+      'Glass and steel roof for a historic courtyard',
+    ],
+  },
+  {
+    slug: 'quad-gridshell-stress-curvature',
+    category: 'research',
+    title: 'Optimized quad gridshells from stress and curvature fields',
+    kicker: 'Paper · 2018',
+    tagline:
+      'Laying out a quad gridshell so that its members follow the forces and the shape at the same time.',
+    summary:
+      'Greco (2018): generating quad gridshell layouts on free-form surfaces by combining the stress field under load with the surface’s curvature field.',
+    tags: ['Gridshells', 'Quad meshes', 'Stress fields', 'Curvature', 'Form finding'],
+    links: [
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/326540880_Optimized_Quad_Gridshell_from_Stress_Field_and_Curvature_Field',
+        note: 'Greco · ResearchGate',
+      },
+    ],
+    intro: [
+      'Optimized Quad Gridshell from Stress Field and Curvature Field, by Lorenzo Greco, 2018.',
+      'A gridshell is a curved surface built from a lattice of members, and the layout of that lattice decides both how well it carries load and how easy it is to build. The paper combines two guiding fields on the surface, the principal stress directions under load and the principal curvature directions of the shape, to generate a quad layout that respects both.',
+    ],
+    images: [
+      {
+        caption: 'Illustration: a quad grid whose lines bend to follow guiding directions on a free-form surface',
+        src: '/img/work/paper-quad-gridshell.png',
+        ratio: '19 / 10',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'Illustration: the same grid laid out along stress directions, along curvature directions, and along a blend of the two',
+        src: '/img/work/paper-gridshell-fields.png',
+        ratio: '80 / 31',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Forces and shape together',
+        paragraphs: [
+          'Members aligned with principal stresses carry load efficiently. Members aligned with principal curvatures make cladding and node details simpler. The two sets of directions rarely agree, so the method blends the fields to find a layout that balances structure and fabrication.',
+        ],
+      },
+    ],
+    highlights: [
+      'Quad gridshell layout on free-form surfaces',
+      'Guided by stress and curvature fields',
+      'Balances structural efficiency and buildability',
+    ],
+  },
+  {
+    slug: 'steel-connections-ml',
+    category: 'research',
+    title: 'Machine learning and optimization for steel connections',
+    kicker: 'Paper · 2018',
+    tagline:
+      'Suggesting steel-joint connections with machine learning and optimization, inside an interactive design tool.',
+    summary:
+      'Greco (2018): machine-learning and optimization techniques that suggest steel connections, wrapped in an interactive design framework.',
+    tags: ['Machine learning', 'Optimization', 'Steel connections', 'Design tools'],
+    links: [
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/326540711_Machine_Learning_and_Optimization_techniques_for_Steel_Connections',
+        note: 'Greco · ResearchGate',
+      },
+    ],
+    intro: [
+      'Machine Learning and Optimization techniques for Steel Connections, by Lorenzo Greco, 2018.',
+      'Designing steel connections is repetitive, rule-bound work that still takes an engineer’s time on every project. The paper applies machine-learning and optimization algorithms to suggest suitable joint connections with high accuracy, and puts them inside an interactive design framework so that the engineer stays in control of the result.',
+    ],
+    images: [
+      {
+        caption: 'An interactive design aid for steel frames: members, sections and loads feed the connection suggestions',
+        src: '/img/site/fe-analysis.png',
+        ratio: '16 / 9',
+        fit: 'contain',
+      },
+      {
+        caption: 'How the pieces fit: the joint goes in, machine learning suggests a connection, optimization refines it, and the engineer decides',
+        src: '/img/work/paper-steel-workflow.png',
+        ratio: '4 / 1',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Why connections',
+        paragraphs: [
+          'A steel frame can have hundreds of joints, and each one needs a connection chosen, sized and checked. The choices follow patterns that experienced engineers recognise quickly, which makes them a good fit for a model that learns those patterns and an optimizer that fills in the details.',
+        ],
+      },
+      {
+        heading: 'From rules to suggestions',
+        paragraphs: [
+          'Instead of the engineer working through every option by hand, the algorithms propose a connection for each joint and the optimization refines it. The proposal appears in the design tool, where the engineer can accept or change it.',
+        ],
+      },
+    ],
+    highlights: [
+      'Machine learning for connection selection',
+      'Optimization to refine each suggestion',
+      'Built into an interactive design tool',
+    ],
+  },
+  {
+    slug: 'tall-building-wind-response',
+    category: 'research',
+    title: 'Wind-induced response of a slender tall building in London',
+    kicker: 'Paper · 2018',
+    tagline:
+      'Measuring how a slender London tower actually moves in the wind, and comparing it with what design expects.',
+    summary:
+      'Margnelli, Greco, Gkoktsi et al. (2018): a full-scale case study of the wind-induced response of a slender tall building in London.',
+    tags: ['Wind engineering', 'Tall buildings', 'Structural monitoring', 'Signal processing'],
+    links: [
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/326708987_Wind-induced_response_of_tall_buildings_Case_study_of_a_slender_tall_building_in_London',
+        note: 'Margnelli, Greco, Gkoktsi et al. · ResearchGate',
+      },
+      { label: 'The 2019 follow-up', href: '/work/research/tall-building-aeroelastic', note: 'Aeroelastic effects at full scale' },
+    ],
+    intro: [
+      'Wind-induced response of tall buildings: Case study of a slender tall building in London, by Alessandro Margnelli, Lorenzo Greco, Kyriaki Gkoktsi, Marc Zanchetta and co-authors, 2018.',
+      'Slender towers are governed by how they move in the wind as much as by their strength. The study instruments a slender tall building in London and compares the measured response with what design methods predict.',
+    ],
+    images: [
+      {
+        caption: 'Illustration of the monitoring set-up: wind measured at the top, accelerations at several levels, recorded continuously',
+        src: '/img/work/paper-tower-monitoring.png',
+        ratio: '2 / 1',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'Across-wind force on the tower over ten minutes, derived from the measurements',
+        src: '/img/site/signal.png',
+        ratio: '3 / 2',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Instrumenting a real building',
+        paragraphs: [
+          'The monitoring set-up recorded wind excitation and tower acceleration continuously, and the analysis ran over roughly 660 million data points, with bespoke software deriving transfer functions and correlations in real time.',
+        ],
+      },
+    ],
+    highlights: [
+      'Full-scale monitoring of a London tower',
+      'About 660 million data points analysed',
+      'Measured response compared with design',
+    ],
+  },
+  {
+    slug: 'tall-building-aeroelastic',
+    category: 'research',
+    title: 'Full-scale identification of aeroelastic effects on a tall building',
+    kicker: 'Paper · 2019',
+    tagline:
+      'Finding, in real measurements, where the wind and the moving building start to interact.',
+    summary:
+      'Gonzalez-Fernandez, Macdonald, Titurus, Greco, Zanchetta et al. (2019): identifying aeroelastic effects on a tall building from full-scale data.',
+    tags: ['Wind engineering', 'Aeroelasticity', 'System identification', 'Tall buildings'],
+    links: [
+      {
+        label: 'Read the paper',
+        href: 'https://www.researchgate.net/publication/335653099_Full-scale_identification_of_aeroelastic_effects_on_a_tall_building',
+        note: 'Gonzalez-Fernandez, Macdonald, Titurus et al. · ResearchGate',
+      },
+      { label: 'The 2018 case study', href: '/work/research/tall-building-wind-response', note: 'Wind-induced response' },
+    ],
+    intro: [
+      'Full-scale identification of aeroelastic effects on a tall building, by Daniel Gonzalez-Fernandez, John Macdonald, Branislav Titurus, Lorenzo Greco, Marc Zanchetta and co-authors, 2019.',
+      'When a tall building moves, its motion changes the wind forces acting on it. These aeroelastic effects alter the effective damping and stiffness of the structure, but are usually only studied in wind tunnels. The paper identifies them from measurements on a real building.',
+    ],
+    images: [
+      {
+        caption: 'The aeroelastic loop: wind moves the building, and the motion feeds back into the wind forces',
+        src: '/img/work/paper-aeroelastic-loop.png',
+        ratio: '16 / 7',
+        fit: 'contain',
+        wide: true,
+      },
+      {
+        caption: 'Across-wind force on the tower, the kind of full-scale record the identification works from',
+        src: '/img/site/signal.png',
+        ratio: '3 / 2',
+        fit: 'contain',
+      },
+    ],
+    sections: [
+      {
+        heading: 'Why full scale',
+        paragraphs: [
+          'Wind-tunnel models capture a lot, but not everything about a real building: its actual damping, its surroundings, and the turbulence it really sees. Identifying aeroelastic behaviour from measurements on the finished tower tests design assumptions against reality.',
+        ],
+      },
+      {
+        heading: 'From records to parameters',
+        paragraphs: [
+          'Building on the London monitoring campaign, the study uses system-identification techniques on the measured wind and acceleration records to estimate how the building’s dynamic properties change with wind speed, the signature of aeroelastic interaction.',
+        ],
+      },
+    ],
+    highlights: [
+      'Aeroelastic effects identified at full scale',
+      'With the University of Bristol',
+      'Builds on the London monitoring campaign',
     ],
   },
   // ---------------- Websites ----------------
