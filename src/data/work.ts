@@ -43,6 +43,10 @@ export interface ImageSlot {
   credit?: string;
   /** Optional URL the credit links to (e.g. the source/licence page). */
   creditHref?: string;
+  /** Optional looping video (root-absolute .mp4); `src` is then its poster frame. */
+  video?: string;
+  /** Show the hero at full container width instead of half (wide simulation renders). */
+  wide?: boolean;
 }
 
 export interface Project {
@@ -67,6 +71,8 @@ export interface Project {
   highlights: string[];
   /** Optional labelled feature thumbnails, shown as a strip on the page. */
   gallery?: GalleryItem[];
+  /** Card thumbnail, when the hero (e.g. a wide video poster) crops badly in a card. */
+  thumbnail?: string;
 }
 
 /** A small labelled image in a feature strip. */
@@ -157,6 +163,29 @@ export const categories: Category[] = [
       fit: 'cover',
     },
     projectSlugs: ['dodo', 'capybara'],
+  },
+  {
+    slug: 'cfd',
+    name: 'CFD',
+    eyebrow: 'Computational fluid dynamics',
+    title: 'A state-of-the-art lattice-Boltzmann solver.',
+    lede:
+      'Our own GPU-accelerated CFD engine for external aerodynamics, internal flows and heat transfer — fast enough to sit inside a design loop.',
+    description: [
+      'Raphos LBM is a lattice-Boltzmann CFD engine written from scratch at Raphos. It uses the methods behind the current generation of high-performance LBM codes — cumulant collision on a D3Q27 lattice, in-place AA streaming, compressed FP16 storage and interpolated wall boundaries — so that transient, turbulent flows around real geometry run on a single GPU or a laptop CPU.',
+      'The engine is a standalone C++ library with a plain C API, so it can be embedded in any tool. It also ships as a Synera add-in, where a virtual wind tunnel is a handful of nodes on the canvas.',
+    ],
+    links: [],
+    image: {
+      caption:
+        'Raphos LBM: a dodo in a virtual wind tunnel at 10 m/s, seen from above, with vorticity on a horizontal plane through the body (rendered from the standalone engine)',
+      src: '/img/work/lbm-dodo-top.jpg',
+      video: '/img/work/lbm-dodo-top.mp4',
+      ratio: '3 / 1',
+      fit: 'cover',
+      wide: true,
+    },
+    projectSlugs: ['raphos-lbm'],
   },
   {
     slug: 'websites',
@@ -881,6 +910,90 @@ export const projects: Project[] = [
     ],
   },
 
+  // ---------------- CFD ----------------
+  {
+    slug: 'raphos-lbm',
+    category: 'cfd',
+    title: 'Raphos LBM',
+    kicker: 'CFD engine · Standalone & Synera add-in',
+    thumbnail: '/img/work/lbm-dodo-streamlines.jpg',
+    tagline:
+      'A state-of-the-art lattice-Boltzmann solver for wind tunnels, internal flows and heat transfer, on GPU or CPU.',
+    summary:
+      'Lattice-Boltzmann CFD engine: cumulant D3Q27, LES, FP16 storage, conjugate heat transfer. CUDA or AVX2, standalone or in Synera.',
+    tags: ['Lattice Boltzmann', 'Cumulant D3Q27', 'LES', 'CUDA', 'AVX2', 'Conjugate heat transfer', 'C++20'],
+    links: [],
+    intro: [
+      'Raphos LBM is our own computational fluid dynamics engine. It solves the lattice-Boltzmann equations on a uniform grid around any mesh, giving transient flow fields, forces and surface pressure without a meshing step: drop in an STL, set the wind speed and run.',
+      'The video above was produced with the standalone engine, outside Synera: a dodo standing on a moving ground plane in a 10 m/s wind, 6.6 million cells with the LES turbulence model. The whole run took about 11 minutes on four CPU cores, at around 60 million lattice updates per second.',
+    ],
+    images: [
+      {
+        caption:
+          'Side view: vorticity on the centre plane as the wake sheds behind the body',
+        src: '/img/work/lbm-dodo-side.jpg',
+        video: '/img/work/lbm-dodo-side.mp4',
+        ratio: '3 / 1',
+        fit: 'cover',
+        wide: true,
+      },
+      {
+        caption: 'Time-averaged streamlines traced through the mean flow; amber marks the air caught in the recirculating wake',
+        src: '/img/work/lbm-dodo-streamlines.jpg',
+        ratio: '16 / 9',
+        fit: 'cover',
+      },
+      {
+        caption: 'Top view: vorticity on a horizontal plane through the body',
+        src: '/img/work/lbm-dodo-top.jpg',
+        video: '/img/work/lbm-dodo-top.mp4',
+        ratio: '3 / 1',
+        fit: 'cover',
+      },
+      {
+        caption: 'Time-averaged pressure on the centre plane: stagnation in front of the body (amber), suction over the head and in the wake (blue)',
+        src: '/img/work/lbm-dodo-pressure.jpg',
+        ratio: '3 / 1',
+        fit: 'cover',
+      },
+    ],
+    sections: [
+      {
+        heading: 'State-of-the-art numerics',
+        paragraphs: [
+          'The engine implements the methods used by today’s fastest lattice-Boltzmann codes, and every one of them is checked against analytic solutions and published benchmarks.',
+        ],
+        list: [
+          'Cumulant collision on D3Q27 by default, stable and plausible even on under-resolved flows at Re = 10⁶; regularized, TRT and BGK operators for moderate Reynolds numbers.',
+          'Smagorinsky large-eddy simulation for turbulent flows.',
+          'In-place AA streaming with populations stored in FP32 or compressed FP16, halving memory traffic.',
+          'Interpolated (Bouzidi) bounce-back with wall distances from the mesh, moving walls and slip walls.',
+          'Galilean-invariant momentum exchange for forces on each body, every step.',
+        ],
+      },
+      {
+        heading: 'Heat transfer',
+        paragraphs: [
+          'A coupled energy lattice adds natural and forced convection: Boussinesq buoyancy, turbulent diffusivity from the LES model, and conjugate conduction through solids with per-body heat generation. That makes it suitable for electronics cooling, heated enclosures and thermal comfort studies as well as aerodynamics.',
+        ],
+      },
+      {
+        heading: 'GPU or CPU, standalone or in Synera',
+        paragraphs: [
+          'The physics is written once and compiled both for NVIDIA GPUs (CUDA) and for AVX2 CPUs, which process eight cells at a time; the CPU backend is the reference the GPU is tested against. The core is a C++20 library with a C API, so it embeds in any pipeline. In Synera it becomes a set of nodes: build a case, run it, and read back forces, flow fields and surface pressure.',
+          'A validation gate of 24 cases runs on every change, including Poiseuille flow, Taylor–Green vortices, the lid-driven cavity against Ghia et al. and natural convection against de Vahl Davis.',
+        ],
+      },
+    ],
+    highlights: [
+      'Cumulant D3Q27 lattice-Boltzmann with LES',
+      'NVIDIA GPU (CUDA) or AVX2 CPU backend',
+      'Conjugate heat transfer and buoyancy',
+      'Forces, flow fields and surface pressure',
+      '24-case validation suite',
+      'Standalone C API or Synera add-in',
+    ],
+  },
   // ---------------- Websites ----------------
   {
     slug: 'babelotheca',

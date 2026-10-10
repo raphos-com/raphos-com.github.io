@@ -46,7 +46,7 @@ const research = [
       <p class="lede page-lede">
         From plugins used by designers worldwide to data-science products and
         instrumented buildings — a sample of what we build and ship, grouped into
-        three areas. Each project has its own page.
+        four areas. Each project has its own page.
       </p>
 
       <nav class="cat-jump" aria-label="Work areas">
@@ -82,9 +82,9 @@ const research = [
                 kicker={p.kicker}
                 href={withBase(`/work/${category.slug}/${p.slug}`)}
                 tags={p.tags}
-                image={p.images[0]?.src ? withBase(p.images[0].src) : undefined}
+                image={(p.thumbnail ?? p.images[0]?.src) ? withBase(p.thumbnail ?? p.images[0].src) : undefined}
                 imageAlt={p.images[0]?.caption}
-                imageFit={p.images[0]?.fit}
+                imageFit={p.thumbnail ? 'cover' : p.images[0]?.fit}
               >
                 {p.summary}
               </ProjectCard>
