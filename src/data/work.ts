@@ -73,6 +73,8 @@ export interface Project {
   gallery?: GalleryItem[];
   /** Card thumbnail, when the hero (e.g. a wide video poster) crops badly in a card. */
   thumbnail?: string;
+  /** Interactive 3D flow view (FlowViewer), shown full width under the hero. */
+  viewer?: { data: string; poster: string; caption: string };
 }
 
 /** A small labelled image in a feature strip. */
@@ -917,6 +919,12 @@ export const projects: Project[] = [
     title: 'Raphos LBM',
     kicker: 'CFD engine · Standalone & Synera add-in',
     thumbnail: '/img/work/lbm-dodo-streamlines.jpg',
+    viewer: {
+      data: '/img/work/lbm-dodo-flow.bin',
+      poster: '/img/work/lbm-dodo-streamlines.jpg',
+      caption:
+        'Interactive: time-averaged streamlines around the dodo, with particles travelling at the simulated mean speed (slowed down). Drag to look around.',
+    },
     tagline:
       'A state-of-the-art lattice-Boltzmann solver for wind tunnels, internal flows and heat transfer, on GPU or CPU.',
     summary:
@@ -925,7 +933,7 @@ export const projects: Project[] = [
     links: [],
     intro: [
       'Raphos LBM is our own computational fluid dynamics engine. It solves the lattice-Boltzmann equations on a uniform grid around any mesh, giving transient flow fields, forces and surface pressure without a meshing step: drop in an STL, set the wind speed and run.',
-      'The video above was produced with the standalone engine, outside Synera: a dodo standing on a moving ground plane in a 10 m/s wind, 6.6 million cells with the LES turbulence model. The whole run took about 11 minutes on four CPU cores, at around 60 million lattice updates per second.',
+      'The video and the 3D view above were produced with the standalone engine, outside Synera: a dodo standing on a moving ground plane in a 10 m/s wind, 6.6 million cells with the LES turbulence model. The whole run took about 11 minutes on four CPU cores, at around 60 million lattice updates per second.',
     ],
     images: [
       {

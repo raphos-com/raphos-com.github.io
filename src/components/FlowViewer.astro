@@ -1,0 +1,307 @@
+---
+// Interactive 3D view of a Raphos LBM wind-tunnel result: the body, its time-averaged
+// streamlines, and particles that travel along them at the simulated mean speed.
+// Data comes from RaphosLBMStandalone/render/export_web.py (format documented there).
+// Without WebGL, or before the script runs, the poster image is shown instead.
+import { withBase } from '../lib/url';
+
+export interface Props {
+  data: string;     // root-absolute .bin from export_web.py
+  poster: string;   // root-absolute still shown until (or instead of) the 3D view
+  caption?: string;
+  ratio?: string;
+}
+const { data, poster, caption, ratio = '16 / 9' } = Astro.props;
+---
+
+<figure class="flow">
+  <div class="flow-frame" style={`aspect-ratio: ${ratio};`} data-flow-viewer data-src={withBase(data)}>
+    <img class="flow-poster" src={withBase(poster)} alt={caption ?? ''} loading="lazy" decoding="async" />
+    <div class="flow-ui" hidden>
+      <span class="flow-hint">Drag to orbit</span>
+      <span class="flow-legend" aria-hidden="true">
+        <span>slow</span><span class="flow-ramp"></span><span>fast</span>
+      </span>
+    </div>
+  </div>
+  {caption && <figcaption class="flow-cap">{caption}</figcaption>}
+</figure>
+
+<script>
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+  // Speed ramp, as a fraction of the free stream: amber in the wake, mid blue in the free stream,
+  // deep blue where the air speeds up over the body. Same stops as render/streamlines.py.
+  const hex = (h: string): [number, number, number] => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255) as [number, number, number];
+  const RAMP: [number, [number, number, number]][] = [
+    [0.3, hex('#d98a3d')], [0.6, hex('#e9b77d')], [0.85, hex('#9fb9ee')], [1.0, hex('#5b8def')], [1.2, hex('#1b3a8a')],
+  ];
+  function ramp(u: number, out: Float32Array, o: number) {
+    if (u <= RAMP[0][0]) { out.set(RAMP[0][1], o); return; }
+    for (let i = 1; i < RAMP.length; i++) {
+      const [u1, c1] = RAMP[i];
+      if (u <= u1) {
+        const [u0, c0] = RAMP[i - 1];
+        const t = (u - u0) / (u1 - u0);
+        for (let k = 0; k < 3; k++) out[o + k] = c0[k] + t * (c1[k] - c0[k]);
+        return;
+      }
+    }
+    out.set(RAMP[RAMP.length - 1][1], o);
+  }
+
+  interface Flow {
+    vertices: Float32Array; triangles: Uint16Array;
+    lines: { start: number; n: number }[];
+    points: Float32Array; speed: Float32Array;
+  }
+
+  function parse(buf: ArrayBuffer): Flow {
+    const dv = new DataView(buf);
+    if (dv.getUint32(0, true) !== 0x4d424c52) throw new Error('not a Raphos LBM flow file');
+    const nv = dv.getUint32(8, true), nf = dv.getUint32(12, true);
+    const nl = dv.getUint32(16, true), np = dv.getUint32(20, true);
+    const ps = dv.getFloat32(24, true), ss = dv.getFloat32(28, true);
+    let o = 32;
+    const vertices = new Float32Array(buf.slice(o, o + nv * 12)); o += nv * 12;
+    const triangles = new Uint16Array(buf.slice(o, o + nf * 6)); o += nf * 6 + ((nf * 3) % 2 ? 2 : 0);
+    const counts = new Uint32Array(buf.slice(o, o + nl * 4)); o += nl * 4;
+    const q = new Int16Array(buf.slice(o, o + np * 6)); o += np * 6;
+    const s8 = new Uint8Array(buf, o, np);
+    const points = new Float32Array(np * 3);
+    for (let i = 0; i < np * 3; i++) points[i] = q[i] * ps;
+    const speed = new Float32Array(np);
+    for (let i = 0; i < np; i++) speed[i] = s8[i] * ss;
+    const lines = [];
+    let start = 0;
+    for (let i = 0; i < nl; i++) { lines.push({ start, n: counts[i] }); start += counts[i]; }
+    return { vertices, triangles, lines, points, speed };
+  }
+
+  // Simulation axes are z-up with the wind along +x; three.js is y-up.
+  const toThree = (a: Float32Array, i: number, out: Float32Array, o: number) => {
+    out[o] = a[i]; out[o + 1] = a[i + 2]; out[o + 2] = -a[i + 1];
+  };
+
+  async function mount(frame: HTMLElement) {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return;  // keep the poster
+    const flow = parse(await (await fetch(frame.dataset.src!)).arrayBuffer());
+    const U = 10;  // free-stream speed of the exported case, m/s
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setClearColor(0xffffff, 1);
+    const canvas = renderer.domElement;
+    canvas.className = 'flow-canvas';
+    canvas.setAttribute('aria-label', 'Interactive 3D view of the streamlines around the body');
+    frame.prepend(canvas);
+    frame.classList.add('is-live');
+    (frame.querySelector('.flow-ui') as HTMLElement).hidden = false;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 16 / 9, 0.05, 50);
+    camera.position.set(-3.3, 1.9, 4.3);
+    const controls = new OrbitControls(camera, canvas);
+    controls.target.set(1.1, 0.45, 0);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.enableZoom = false;  // keep the page's scroll wheel for scrolling
+    controls.minPolarAngle = 0.15;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+    controls.autoRotate = !reduced;
+    controls.autoRotateSpeed = 0.35;
+    canvas.addEventListener('pointerdown', () => { controls.autoRotate = false; });
+    controls.update();
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xc9ced6, 1.6));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+    sun.position.set(-2, 4, 3);
+    scene.add(sun);
+
+    // Body
+    const nv = flow.vertices.length / 3;
+    const bodyPos = new Float32Array(nv * 3);
+    for (let i = 0; i < nv; i++) toThree(flow.vertices, i * 3, bodyPos, i * 3);
+    const bodyGeo = new THREE.BufferGeometry();
+    bodyGeo.setAttribute('position', new THREE.BufferAttribute(bodyPos, 3));
+    bodyGeo.setIndex(new THREE.BufferAttribute(flow.triangles, 1));
+    bodyGeo.computeVertexNormals();
+    scene.add(new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: 0xb4bac4, roughness: 0.6, metalness: 0.05 })));
+
+    // Ground: the moving floor of the tunnel, faint so the white page reads through.
+    const grid = new THREE.GridHelper(9, 36, 0xd5d9e0, 0xe7e9ee);
+    grid.position.set(1.5, 0, 0);
+    scene.add(grid);
+
+    // Streamlines, faint and coloured by speed
+    const np = flow.speed.length;
+    const linePos = new Float32Array(np * 3), lineCol = new Float32Array(np * 3);
+    for (let i = 0; i < np; i++) {
+      toThree(flow.points, i * 3, linePos, i * 3);
+      ramp(flow.speed[i] / U, lineCol, i * 3);
+    }
+    const segIdx: number[] = [];
+    for (const l of flow.lines) for (let k = 0; k < l.n - 1; k++) segIdx.push(l.start + k, l.start + k + 1);
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
+    lineGeo.setAttribute('color', new THREE.BufferAttribute(lineCol, 3));
+    lineGeo.setIndex(segIdx);
+    scene.add(new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.28, depthWrite: false })));
+
+    // Particles: each streamline carries a few, moving at the local mean speed. A particle is a
+    // short comet of TRAIL dots spaced in time, fading towards the tail.
+    const lines = flow.lines.map((l) => {
+      const t = new Float32Array(l.n);  // travel time from the seed, s
+      for (let k = 1; k < l.n; k++) {
+        const a = (l.start + k - 1) * 3, b = (l.start + k) * 3;
+        const ds = Math.hypot(flow.points[b] - flow.points[a], flow.points[b + 1] - flow.points[a + 1], flow.points[b + 2] - flow.points[a + 2]);
+        const v = Math.max(0.5 * (flow.speed[l.start + k - 1] + flow.speed[l.start + k]), 0.3);
+        t[k] = t[k - 1] + ds / v;
+      }
+      return { ...l, t };
+    });
+    const PER_LINE = 2, TRAIL = 20, DT = 0.0015, SLOWMO = 0.12;  // SLOWMO: playback speed vs real time
+    const nPart = lines.length * PER_LINE * TRAIL;
+    const pPos = new Float32Array(nPart * 3), pCol = new Float32Array(nPart * 3), pA = new Float32Array(nPart);
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+    pGeo.setAttribute('alpha', new THREE.BufferAttribute(pA, 1));
+    const pMat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      uniforms: { size: { value: 9.0 * renderer.getPixelRatio() } },
+      vertexShader: `
+        attribute vec3 color; attribute float alpha; uniform float size;
+        varying vec3 vC; varying float vA;
+        void main() {
+          vC = color; vA = alpha;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * (0.45 + 0.55 * alpha) * (3.0 / -mv.z);
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        varying vec3 vC; varying float vA;
+        void main() {
+          float r = length(gl_PointCoord - 0.5);
+          if (r > 0.5) discard;
+          gl_FragColor = vec4(vC, vA * smoothstep(0.5, 0.3, r));
+        }`,
+    });
+    scene.add(new THREE.Points(pGeo, pMat));
+    const phase = lines.map(() => Array.from({ length: PER_LINE }, (_, j) => (j + Math.random() * 0.6) / PER_LINE));
+
+    const tmp = new Float32Array(3);
+    function placeParticles(time: number) {
+      let p = 0;
+      lines.forEach((l, li) => {
+        const T = l.t[l.n - 1];
+        for (let j = 0; j < PER_LINE; j++) {
+          const head = (time + phase[li][j] * T) % T;
+          for (let s = 0; s < TRAIL; s++, p++) {
+            const tt = head - s * DT;
+            if (tt <= 0) { pA[p] = 0; continue; }
+            let lo = 0, hi = l.n - 1;  // binary search the segment holding travel time tt
+            while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (l.t[mid] <= tt) lo = mid; else hi = mid; }
+            const f = (tt - l.t[lo]) / Math.max(l.t[hi] - l.t[lo], 1e-6);
+            const a = (l.start + lo) * 3, b = (l.start + hi) * 3;
+            for (let k = 0; k < 3; k++) tmp[k] = flow.points[a + k] + f * (flow.points[b + k] - flow.points[a + k]);
+            toThree(tmp, 0, pPos, p * 3);
+            ramp((flow.speed[l.start + lo] * (1 - f) + flow.speed[l.start + hi] * f) / U, pCol, p * 3);
+            // fade in at the seed and out at the end so particles do not pop
+            const edge = Math.min(tt / 0.04, (T - tt) / 0.04, 1);
+            pA[p] = (1 - s / TRAIL) * 0.95 * edge;
+          }
+        }
+      });
+      pGeo.attributes.position.needsUpdate = true;
+      pGeo.attributes.color.needsUpdate = true;
+      pGeo.attributes.alpha.needsUpdate = true;
+    }
+
+    function resize() {
+      const w = frame.clientWidth, h = frame.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(frame);
+    resize();
+
+    let visible = false, last = performance.now(), simTime = 0;
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(frame);
+    placeParticles(0);
+    renderer.setAnimationLoop((now) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (!visible) return;
+      if (!reduced) { simTime += dt * SLOWMO; placeParticles(simTime); }
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-flow-viewer]').forEach((frame) => {
+    // Load three.js work only when the viewer is about to scroll into view.
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      mount(frame).catch(() => { /* keep the poster */ });
+    }, { rootMargin: '300px' });
+    io.observe(frame);
+  });
+</script>
+
+<style>
+  .flow { margin: 0; }
+  .flow-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background: #fff;
+  }
+  .flow-poster, .flow-frame :global(.flow-canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .flow-poster { object-fit: cover; }
+  .flow-frame.is-live .flow-poster { display: none; }
+  .flow-frame :global(.flow-canvas) { cursor: grab; touch-action: pan-y; }
+  .flow-frame :global(.flow-canvas:active) { cursor: grabbing; }
+  .flow-ui {
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-100);
+    letter-spacing: 0.04em;
+    color: #5c6370;
+  }
+  .flow-legend { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .flow-ramp {
+    width: 6rem;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #d98a3d, #e9b77d 33%, #9fb9ee 61%, #5b8def 78%, #1b3a8a);
+  }
+  .flow-cap {
+    margin-top: var(--space-2);
+    font-size: var(--fs-100);
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+</style>
