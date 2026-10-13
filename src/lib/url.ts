@@ -1,5 +1,5 @@
-// Base path the site is served under. On GitHub Pages project sites this is
-// "/raphos-website"; it would be "/" if the site ever moved to a domain root.
+// Base path the site is served under: "/" at the root of raphos.com. Kept
+// configurable in case the site is ever served under a subpath.
 // import.meta.env.BASE_URL may or may not carry a trailing slash depending on
 // config, so we normalise when joining.
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');

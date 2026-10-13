@@ -1,6 +1,6 @@
 # raphos.com
 
-[https://raphos-com.github.io/raphos-website/](https://raphos-com.github.io/raphos-website/)
+[https://raphos.com](https://raphos.com)
 
 The Raphos website — a fast, static marketing site built with [Astro](https://astro.build).
 Raphos is a London consultancy at the intersection of **engineering, machine
@@ -53,6 +53,11 @@ branch / `main`.
 2. Point DNS for `raphos.com` at GitHub Pages
    (`A`/`AAAA` records to GitHub's IPs, or a `CNAME` for `www`). The
    `public/CNAME` file keeps the custom domain bound across deploys.
+
+This repo is named `raphos-com.github.io`, which makes it the account's user
+site. GitHub Pages sites from the account's other repos are therefore served
+under the same domain, e.g. `raphos.com/lean-mechanics/` comes from the
+lean-mechanics repo. Avoid adding pages here whose paths clash with those repos.
 
 ## Notes
 
