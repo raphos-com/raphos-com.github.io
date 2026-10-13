@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout
+  title="Page not found — Raphos"
+  description="The page you were looking for does not exist."
+  path="/404"
+>
+  <!-- GitHub Pages serves this page for every missing path. Deep links into the
+       lean-mechanics docs (e.g. /lean-mechanics/ContinuumMechanics.html) live on
+       their own project site, so forward them there, keeping the rest of the URL. -->
+  <script is:inline>
+    (function () {
+      var m = location.pathname.match(/^\/lean-mechanics(\/.*)?$/);
+      if (m) {
+        location.replace(
+          'https://raphos-com.github.io/lean-mechanics' + (m[1] || '/') + location.search + location.hash
+        );
+      }
+    })();
+  </script>
+
+  <section class="section">
+    <div class="container stack">
+      <p class="eyebrow">404</p>
+      <h1>Page not found</h1>
+      <p class="lede">The page you were looking for does not exist or has moved.</p>
+      <p>
+        <a class="btn btn--primary" href={withBase('/')}>Back to the homepage</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
